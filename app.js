@@ -14,27 +14,34 @@ var toolMeta = {
   'openviking_memory_commit': { icon: '💾', cat: '记忆', color: '#84cc16', cls: 'mig', desc: '提交记忆到 OpenViking' }
 };
 
-// Default counts (fallback)
-var defaultToolCounts = {
-  'openviking_search': 4, 'write_file': 4, 'exec': 4, 'web_fetch': 2,
-  'openviking_read': 1, 'openviking_multi_read': 1, 'generate_image': 1, 'edit_file': 1
-};
-
-var toolCounts = {};
-var toolFreq = buildToolFreq();
-
-function buildToolFreq() {
-  var counts = (Object.keys(toolCounts).length > 0) ? toolCounts : defaultToolCounts;
-  var result = [];
-  var names = Object.keys(counts);
-  for (var i = 0; i < names.length; i++) {
-    var n = names[i];
-    var m = toolMeta[n] || { icon: '🔧', cat: '其他', color: '#666', cls: 'mib', desc: n };
-    result.push({ name: n, icon: m.icon, count: counts[n], cat: m.cat, color: m.color, cls: m.cls, desc: m.desc });
-  }
-  result.sort(function(a,b) { return b.count - a.count; });
-  return result;
+// Dynamic tool stats loaded from tool_stats.json
+var _toolStats = null;
+function loadToolStats(cb) {
+  var x = new XMLHttpRequest();
+  x.open('GET', 'tool_stats.json?t=' + Date.now(), true);
+  x.onload = function() {
+    if (x.status === 200) {
+      try { _toolStats = JSON.parse(x.responseText); if(cb) cb(); }
+      catch(e) { console.log('Tool stats error:', e); }
+    }
+  };
+  x.send();
 }
+function refreshToolFreq() {
+  if (!_toolStats) return;
+  var tools = _toolStats.tools || [];
+  toolFreq = tools.map(function(t) { return t; });
+  if (toolFreq.length === 0) {
+    // fallback
+    toolFreq = [
+      { name: 'openviking_search', icon: '🔍', count: 4, cat: '搜索', color: '#3b82f6', cls: 'mib', desc: 'OpenViking 语义搜索' },
+      { name: 'write_file', icon: '📝', count: 4, cat: '写入', color: '#f59e0b', cls: 'mio', desc: '创建/写入文件' },
+      { name: 'exec', icon: '💻', count: 4, cat: '执行', color: '#ec4899', cls: 'mip', desc: 'Shell 命令执行' },
+      { name: 'web_fetch', icon: '🌐', count: 2, cat: '网络', color: '#8b5cf6', cls: 'mib', desc: '网页抓取与提取' }
+    ];
+  }
+}
+var toolFreq = [];
 
 // Load dynamic gateway start time from status.json
 function fetchStatus() {
@@ -82,13 +89,54 @@ function animateCounter(el, target, duration) {
 function getTotalCalls() { var t=0; for(var i=0;i<toolFreq.length;i++) t+=toolFreq[i].count; return t; }
 function getToolTypes() { return toolFreq.length; }
 
+// Init: load dynamic tool stats, then render everything
 document.addEventListener('DOMContentLoaded', function() {
-  setTimeout(function() {
-    var s1=document.getElementById('sc1'), s2=document.getElementById('sc2'), s3=document.getElementById('sc3');
-    if(s1) animateCounter(s1, getTotalCalls(), 800);
-    if(s2) animateCounter(s2, 5, 600);
-    if(s3) animateCounter(s3, 4, 500);
-  }, 300);
+  loadToolStats(function() {
+    refreshToolFreq();
+    setTimeout(function() {
+      var s1=document.getElementById('sc1'), s2=document.getElementById('sc2'), s3=document.getElementById('sc3');
+      if(s1) animateCounter(s1, getTotalCalls(), 800);
+      if(s2) animateCounter(s2, (_toolStats&&_toolStats.tasks)?_toolStats.tasks.length:5, 600);
+      if(s3) animateCounter(s3, (_toolStats&&_toolStats.memories)?_toolStats.memories.length:4, 500);
+      // Update badges
+      var sub1 = document.querySelector('.stat:nth-child(1) .stsub');
+      if(sub1 && _toolStats) sub1.textContent = getToolTypes() + ' tools - ' + (_toolStats.success_rate||100) + '% OK';
+      // Update panel badges
+      var panels = document.querySelectorAll('.ph');
+      for(var j=0;j<panels.length;j++) {
+        var ph=panels[j], txt=ph.textContent;
+        if(txt.indexOf('工具执行日志')>=0) { var b=ph.querySelector('.phbadge'); if(b) b.textContent = 'Total '+getTotalCalls()+' calls'; }
+        if(txt.indexOf('工具调用频率')>=0) { var b=ph.querySelector('.phbadge'); if(b) b.textContent = getToolTypes()+' tools - '+getTotalCalls()+' calls'; }
+      }
+      // Render log from tool_stats.json
+      if(_toolStats && _toolStats.log) {
+        var lc = document.querySelector('.log');
+        if(lc) {
+          var entries = _toolStats.log.slice(-18);
+          var h = '';
+          for(var i=0; i<entries.length; i++) {
+            var e = entries[i];
+            var sc = e.status === 'OK' ? 'eso' : 'esf';
+            h += '<div class=\"entry\"><div class=\"ei '+e.cls+'\">'+e.icon+'</div><div><div class=\"en\">'+e.tool+'</div><div class=\"ed\">'+e.desc+'</div></div><div class=\"es '+sc+'\">'+e.status+'</div></div>';
+          }
+          lc.innerHTML = h;
+        }
+      }
+      // Update session overview
+      if(_toolStats) {
+        var sg = document.querySelector('.sgrid');
+        if(sg) {
+          var t = _toolStats;
+          sg.innerHTML = '<div class=\"si\"><div class=\"sid sido\"></div><div><div class=\"sil\">Calls</div><div class=\"siv\">'+t.total_calls+'</div></div></div>'+
+            '<div class=\"si\"><div class=\"sid sido\"></div><div><div class=\"sil\">Tasks</div><div class=\"siv\">'+(t.tasks||[]).length+'</div></div></div>'+
+            '<div class=\"si\"><div class=\"sid sido\"></div><div><div class=\"sil\">Rate</div><div class=\"siv\">'+(t.success_rate||100)+'%</div></div></div>'+
+            '<div class=\"si\"><div class=\"sid sido\"></div><div><div class=\"sil\">Top Tool</div><div class=\"siv\">'+(toolFreq.length>0?toolFreq[0].name:'--')+'</div></div></div>'+
+            '<div class=\"si\"><div class=\"sid sido\"></div><div><div class=\"sil\">Lang</div><div class=\"siv\">CN/EN</div></div></div>'+
+            '<div class=\"si\"><div class=\"sid sido\"></div><div><div class=\"sil\">Platform</div><div class=\"siv\">GitHub Pages</div></div></div>';
+        }
+      }
+    }, 300);
+  });
 });
 
 var maxCount = 1;
@@ -224,22 +272,43 @@ function showTools() {
 }
 
 function showTasks() {
-  openModal('✅ 完成任务 (5)', [
-    {icon:'🐱',cls:'mig',name:'Self-intro page',desc:'创建小黑自我介绍网页',st:'DONE',sc:'mok'},
-    {icon:'🖼️',cls:'mib',name:'Fetch Xiaohei pic',desc:'抓取罗小黑角色图片',st:'DONE',sc:'mok'},
-    {icon:'📊',cls:'mip',name:'AI Dashboard',desc:'构建实时任务可视化仪表盘',st:'DONE',sc:'mok'},
-    {icon:'🚀',cls:'mic2',name:'Deploy online',desc:'部署至 GitHub Pages',st:'DONE',sc:'mok'},
-    {icon:'✨',cls:'mio',name:'Enhance Dashboard',desc:'交互增强 + 数据可视化',st:'DONE',sc:'mok'}
-  ], 'showTaskDetail');
+  if (_toolStats && _toolStats.tasks) {
+    var tasks = _toolStats.tasks;
+    var items = [];
+    for (var i = 0; i < tasks.length; i++) {
+      var t = tasks[i];
+      items.push({ icon: t.icon, cls: t.cls||'mig', name: t.name, desc: t.desc, st: t.status, sc: 'mok' });
+    }
+    openModal('✅ 完成任务 (' + tasks.length + ')', items, 'showTaskDetail');
+  } else {
+    openModal('✅ 完成任务 (6)', [
+      {icon:'🐱',cls:'mig',name:'Self-intro page',desc:'创建小黑自我介绍网页',st:'DONE',sc:'mok'},
+      {icon:'🖼️',cls:'mib',name:'Fetch Xiaohei pic',desc:'抓取罗小黑角色图片',st:'DONE',sc:'mok'},
+      {icon:'📊',cls:'mip',name:'AI Dashboard',desc:'构建实时任务可视化仪表盘',st:'DONE',sc:'mok'},
+      {icon:'🚀',cls:'mic2',name:'Deploy online',desc:'部署至 GitHub Pages',st:'DONE',sc:'mok'},
+      {icon:'✨',cls:'mio',name:'Enhance Dashboard',desc:'交互增强 + 数据可视化',st:'DONE',sc:'mok'},
+      {icon:'🔧',cls:'mip',name:'Dynamic Tool Stats',desc:'工具调用数据动态化',st:'DONE',sc:'mok'}
+    ], 'showTaskDetail');
+  }
 }
 
 function showMemories() {
-  openModal('🧠 记忆条目 (4)', [
-    {icon:'📋',cls:'mib',name:'identity.md',desc:'我是罗小黑，猫妖精',st:'ACTIVE',sc:'mok'},
-    {icon:'📁',cls:'mig',name:'trajectories/',desc:'任务执行轨迹记录',st:'PENDING',sc:'mpd'},
-    {icon:'📁',cls:'mip',name:'experiences/',desc:'经验教训提炼',st:'PENDING',sc:'mpd'},
-    {icon:'💫',cls:'mic2',name:'soul.md',desc:'小黑性格 & 灵魂设定',st:'ACTIVE',sc:'mok'}
-  ], 'showMemDetail');
+  if (_toolStats && _toolStats.memories) {
+    var mems = _toolStats.memories;
+    var items = [];
+    for (var i = 0; i < mems.length; i++) {
+      var m = mems[i];
+      items.push({ icon: m.icon, cls: m.cls||'mig', name: m.name, desc: m.desc, st: m.status, sc: m.status==='ACTIVE'?'mok':'mpd' });
+    }
+    openModal('🧠 记忆条目 (' + mems.length + ')', items, 'showMemDetail');
+  } else {
+    openModal('🧠 记忆条目 (4)', [
+      {icon:'📋',cls:'mib',name:'identity.md',desc:'我是罗小黑，猫妖精',st:'ACTIVE',sc:'mok'},
+      {icon:'📁',cls:'mig',name:'trajectories/',desc:'任务执行轨迹记录',st:'PENDING',sc:'mpd'},
+      {icon:'📁',cls:'mip',name:'experiences/',desc:'经验教训提炼',st:'PENDING',sc:'mpd'},
+      {icon:'💫',cls:'mic2',name:'soul.md',desc:'小黑性格 & 灵魂设定',st:'ACTIVE',sc:'mok'}
+    ], 'showMemDetail');
+  }
 }
 
 // 🪙 DeepSeek Balance
@@ -313,51 +382,25 @@ function showUptime() {
   ]);
 }
 
-// 🔧 Tool call tracking
+// 🔧 Tool call tracking - uses _toolStats from tool_stats.json
 function fetchTools() {
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', 'tools.json?t=' + Date.now(), true);
-  xhr.onload = function() {
-    if (xhr.status === 200) {
-      try {
-        var d = JSON.parse(xhr.responseText);
-        toolCounts = d.tools || {};
-        applyToolData();
-      } catch(e) { console.log('Tools fetch error:', e); }
-    }
-  };
-  xhr.send();
-}
-
-function applyToolData() {
-  // Rebuild toolFreq
-  toolFreq = buildToolFreq();
-
-  // Re-render bar chart
-  renderBarChart();
-
-  // Update stat counters
-  var s1 = document.getElementById('sc1');
-  if (s1) animateCounter(s1, getTotalCalls(), 800);
-
-  // Update stat subtitle
-  var sub = document.querySelector('.stat:nth-child(1) .stsub');
-  if (sub) sub.textContent = getToolTypes() + ' 种工具 · 100% 成功';
-
-  // Update panel headers
-  var badges = document.querySelectorAll('.phbadge');
-  if (badges.length >= 1) badges[0].textContent = '共 ' + getTotalCalls() + ' 次调用';
-  if (badges.length >= 2) badges[1].textContent = getToolTypes() + ' 种工具 · 总调用 ' + getTotalCalls() + ' 次';
-
-  // Update barsum
-  var bsi = document.querySelectorAll('.bsi strong');
-  var topTool = toolFreq.length > 0 ? toolFreq[0] : null;
-  if (bsi.length >= 1 && topTool) bsi[0].textContent = topTool.name + ' (' + topTool.count + '次)';
-  if (bsi.length >= 3) bsi[2].textContent = getToolTypes() + ' 种';
-
-  // Update session overview
-  var sivs = document.querySelectorAll('.sgrid .siv');
-  if (sivs.length >= 2) sivs[1].textContent = getTotalCalls() + ' 次';
+  loadToolStats(function() {
+    refreshToolFreq();
+    renderBarChart();
+    var s1 = document.getElementById('sc1');
+    if (s1) animateCounter(s1, getTotalCalls(), 800);
+    var sub = document.querySelector('.stat:nth-child(1) .stsub');
+    if (sub) sub.textContent = getToolTypes() + ' tools - ' + ((_toolStats&&_toolStats.success_rate)?_toolStats.success_rate:100) + '% OK';
+    var badges = document.querySelectorAll('.phbadge');
+    if (badges.length >= 1) badges[0].textContent = 'Total ' + getTotalCalls() + ' calls';
+    if (badges.length >= 2) badges[1].textContent = getToolTypes() + ' tools - ' + getTotalCalls() + ' calls';
+    var bsi = document.querySelectorAll('.bsi strong');
+    var topTool = toolFreq.length > 0 ? toolFreq[0] : null;
+    if (bsi.length >= 1 && topTool) bsi[0].textContent = topTool.name + ' (' + topTool.count + ')';
+    if (bsi.length >= 3) bsi[2].textContent = getToolTypes() + '';
+    var sivs = document.querySelectorAll('.sgrid .siv');
+    if (sivs.length >= 2) sivs[1].textContent = getTotalCalls() + '';
+  });
 }
 
 console.log('🐱 Xiaohei Dashboard ready!');
