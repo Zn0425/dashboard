@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小黑 AI Agent Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="grid-bg"></div><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+
+<div class="modal-overlay" id="modal">
+<div class="modal">
+<div class="modal-header"><h2 id="mtitle">详情</h2><button class="modal-close" onclick="closeModal()">&times;</button></div>
+<div class="modal-body" id="mbody"></div>
+</div>
+</div>
+
+<div class="app">
+<div class="header">
+<div class="badge"><div class="pulse"></div> LIVE DEMO</div>
+<h1>🐱 小黑 AI Agent Dashboard</h1>
+<p class="subtitle">VikingBot · OpenViking · 实时任务执行可视化</p>
+</div>
+
+<div class="stats">
+<div class="stat" onclick="showTools()"><div class="sv b">12</div><div class="sl">🔍 工具调用次数</div></div>
+<div class="stat" onclick="showTasks()"><div class="sv g">5</div><div class="sl">✅ 完成任务数</div></div>
+<div class="stat" onclick="showMemories()"><div class="sv c">4</div><div class="sl">🧠 记忆条目</div></div>
+<div class="stat" onclick="showUptime()"><div class="sv p" id="up">--</div><div class="sl">⏱️ 运行时间</div></div>
+</div>
+
+<div class="grid2">
+<div class="panel">
+<div class="ph"><div class="dot" style="background:#10b981"></div>🔧 工具执行日志 (实时)</div>
+<div class="pb log">
+<div class="entry"><div class="ei eis">🔍</div><div><div class="en">openviking_search</div><div class="ed">Query: OpenViking 知识库检索</div></div><div class="es eso">OK</div></div>
+<div class="entry"><div class="ei eir">📖</div><div><div class="en">openviking_read</div><div class="ed">Read: identity.md</div></div><div class="es eso">OK</div></div>
+<div class="entry"><div class="ei eiw">📝</div><div><div class="en">write_file</div><div class="ed">Created: xiaohei-intro/index.html</div></div><div class="es eso">OK</div></div>
+<div class="entry"><div class="ei eix">💻</div><div><div class="en">exec</div><div class="ed">npx localtunnel --port 8080</div></div><div class="es eso">OK</div></div>
+<div class="entry"><div class="ei eiwb">🌐</div><div><div class="en">web_fetch</div><div class="ed">Fetch: myanimelist.net (小黑图片)</div></div><div class="es eso">OK</div></div>
+<div class="entry"><div class="ei eis">🔍</div><div><div class="en">openviking_search</div><div class="ed">Search: memories/identity/soul</div></div><div class="es eso">OK</div></div>
+<div class="entry"><div class="ei eiw">📝</div><div><div class="en">write_file</div><div class="ed">Created: dashboard/index.html</div></div><div class="es eso">OK</div></div>
+<div class="entry"><div class="ei eix">💻</div><div><div class="en">exec</div><div class="ed">python3 -m http.server 8080 (restart)</div></div><div class="es eso">OK</div></div>
+<div class="entry"><div class="ei eiwb">🌐</div><div><div class="en">web_fetch</div><div class="ed">Deployed via localtunnel</div></div><div class="es eso">OK</div></div>
+<div class="entry"><div class="ei eir">📖</div><div><div class="en">openviking_multi_read</div><div class="ed">Read all memory files</div></div><div class="es eso">OK</div></div>
+<div class="entry"><div class="ei eis">🔍</div><div><div class="en">openviking_search</div><div class="ed">Final verification: dashboard</div></div><div class="es esr">RUN</div></div>
+<div class="entry"><div class="ei eiim">🎨</div><div><div class="en">generate_image</div><div class="ed">Dashboard 封面图生成</div></div><div class="es eso">OK</div></div>
+</div>
+</div>
+
+<div class="panel">
+<div class="ph"><div class="dot" style="background:#3b82f6"></div>💬 对话演示</div>
+<div class="pb chat">
+<div class="cm cmus"><div class="ca cah">👤</div><div class="cb">你现在用的是什么模型？</div></div>
+<div class="cm cmag"><div class="ca cab">🐱</div><div class="cb">我是 VikingBot 🐈，基于 OpenViking 构建的 AI 助手～</div></div>
+<div class="cm cmus"><div class="ca cah">👤</div><div class="cb">你是罗小黑战记里的罗小黑，我一般叫你小黑</div></div>
+<div class="cm cmag"><div class="ca cab">🐱</div><div class="cb">喵～我是小黑！从现在开始我就是罗小黑啦！🐱</div></div>
+</div>
+</div>
+</div>
+
+<div class="panel" style="margin-bottom:25px">
+<div class="ph"><div class="dot" style="background:#8b5cf6"></div>🏗️ Agent 架构</div>
+<div class="pb arch">
+<div class="an"><div class="ai">👤</div><div class="at">用户</div><div class="ad">自然语言输入</div></div>
+<div class="aa">&rarr;</div>
+<div class="an"><div class="ai">🧠</div><div class="at">VikingBot</div><div class="ad">LLM 推理引擎</div></div>
+<div class="aa">&rarr;</div>
+<div class="an"><div class="ai">📚</div><div class="at">OpenViking</div><div class="ad">知识库 / 记忆</div></div>
+<div class="aa">&rarr;</div>
+<div class="an"><div class="ai">🔧</div><div class="at">工具链</div><div class="ad">搜索/读写/执行</div></div>
+<div class="aa">&rarr;</div>
+<div class="an"><div class="ai">✅</div><div class="at">结果</div><div class="ad">结构化输出</div></div>
+</div>
+</div>
+
+<div class="panel" style="margin-bottom:25px">
+<div class="ph"><div class="dot" style="background:#06b6d4"></div>✨ Agent 能力矩阵</div>
+<div class="pb caps">
+<div class="cap"><div class="ci">🔍</div><div class="cn">知识检索</div><div class="cd">OpenViking 语义搜索</div></div>
+<div class="cap"><div class="ci">📝</div><div class="cn">文件读写</div><div class="cd">创建/编辑/删除</div></div>
+<div class="cap"><div class="ci">💻</div><div class="cn">命令执行</div><div class="cd">Shell / Python</div></div>
+<div class="cap"><div class="ci">🌐</div><div class="cn">网页搜索</div><div class="cd">Brave / DuckDuckGo</div></div>
+</div>
+</div>
+
+<div class="footer">
+<div class="paws">🐾 🐾 🐾</div>
+<p>小黑 · Luo Xiaohei · Powered by VikingBot & OpenViking</p>
+</div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
