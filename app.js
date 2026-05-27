@@ -23,7 +23,7 @@ function animateCounter(el, target, duration) {
 document.addEventListener('DOMContentLoaded', function() {
   setTimeout(function() {
     var s1=document.getElementById('sc1'), s2=document.getElementById('sc2'), s3=document.getElementById('sc3');
-    if(s1) animateCounter(s1, 12, 800);
+    if(s1) animateCounter(s1, 18, 800);
     if(s2) animateCounter(s2, 5, 600);
     if(s3) animateCounter(s3, 4, 500);
   }, 300);
@@ -31,15 +31,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // tool freq bar chart
 var toolFreq = [
-  { name: 'openviking_search', icon: '🔍', count: 3, cat: '搜索', color: '#3b82f6' },
-  { name: 'write_file', icon: '📝', count: 2, cat: '写入', color: '#f59e0b' },
-  { name: 'exec', icon: '💻', count: 2, cat: '执行', color: '#ec4899' },
+  { name: 'openviking_search', icon: '🔍', count: 4, cat: '搜索', color: '#3b82f6' },
+  { name: 'write_file', icon: '📝', count: 4, cat: '写入', color: '#f59e0b' },
+  { name: 'exec', icon: '💻', count: 4, cat: '执行', color: '#ec4899' },
   { name: 'web_fetch', icon: '🌐', count: 2, cat: '网络', color: '#8b5cf6' },
   { name: 'openviking_read', icon: '📖', count: 1, cat: '读取', color: '#10b981' },
   { name: 'openviking_multi_read', icon: '📚', count: 1, cat: '读取', color: '#10b981' },
-  { name: 'generate_image', icon: '🎨', count: 1, cat: '生成', color: '#06b6d4' }
+  { name: 'generate_image', icon: '🎨', count: 1, cat: '生成', color: '#06b6d4' },
+  { name: 'edit_file', icon: '✏️', count: 1, cat: '写入', color: '#f59e0b' }
 ];
-var maxCount = 3;
+var maxCount = 4;
 
 function renderBarChart() {
   var container = document.getElementById('barchart');
@@ -154,11 +155,12 @@ function showTaskDetail(name) {
 
 // show functions
 function showTools() {
-  openModal('🔍 工具调用 (12次 · 7种 · 100%)', [
-    {icon:'🔍',cls:'mib',name:'openviking_search x3',desc:'OpenViking 语义搜索',st:'OK',sc:'mok'},
-    {icon:'📝',cls:'mio',name:'write_file x2',desc:'创建 HTML/CSS 文件',st:'OK',sc:'mok'},
-    {icon:'💻',cls:'mip',name:'exec x2',desc:'Shell 命令执行',st:'OK',sc:'mok'},
+  openModal('🔍 工具调用 (18次 · 8种 · 100%)', [
+    {icon:'🔍',cls:'mib',name:'openviking_search x4',desc:'OpenViking 语义搜索',st:'OK',sc:'mok'},
+    {icon:'📝',cls:'mio',name:'write_file x4',desc:'创建 HTML/CSS/JS/PY',st:'OK',sc:'mok'},
+    {icon:'💻',cls:'mip',name:'exec x4',desc:'Shell 命令执行',st:'OK',sc:'mok'},
     {icon:'🌐',cls:'mib',name:'web_fetch x2',desc:'网页抓取与提取',st:'OK',sc:'mok'},
+    {icon:'✏️',cls:'mio',name:'edit_file x2',desc:'编辑 Dashboard 文件',st:'OK',sc:'mok'},
     {icon:'📖',cls:'mig',name:'openviking_read x1',desc:'读取单个资源',st:'OK',sc:'mok'},
     {icon:'📚',cls:'mig',name:'openviking_multi_read x1',desc:'并发读取多个资源',st:'OK',sc:'mok'},
     {icon:'🎨',cls:'mic2',name:'generate_image x1',desc:'AI 图像生成',st:'OK',sc:'mok'}
@@ -183,6 +185,62 @@ function showMemories() {
     {icon:'💫',cls:'mic2',name:'soul.md',desc:'小黑性格 & 灵魂设定',st:'ACTIVE',sc:'mok'}
   ], 'showMemDetail');
 }
+
+// 🪙 DeepSeek Balance
+function fetchBalance() {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'balance.json?t=' + Date.now(), true);
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      try {
+        var d = JSON.parse(xhr.responseText);
+        renderBalance(d);
+      } catch(e) { showBalFallback(); }
+    } else { showBalFallback(); }
+  };
+  xhr.onerror = function() { showBalFallback(); };
+  xhr.send();
+}
+
+function renderBalance(d) {
+  var amt = document.getElementById('balamt');
+  var st = document.getElementById('balstat');
+  var top = document.getElementById('baltop');
+  var grt = document.getElementById('balgrt');
+  var tim = document.getElementById('baltime');
+  var bar = document.getElementById('balbar');
+
+  if(amt) amt.textContent = '¥' + parseFloat(d.total_balance).toFixed(2);
+  if(top) top.textContent = '¥' + parseFloat(d.topped_up_balance).toFixed(2);
+  if(grt) grt.textContent = '¥' + parseFloat(d.granted_balance).toFixed(2);
+  if(tim) tim.textContent = d.updated_at;
+
+  var total = parseFloat(d.total_balance);
+  if(st) {
+    if(d.is_available && total > 0) { st.textContent = '✅ 可用'; st.className = 'balstat bsok'; }
+    else if(d.is_available && total <= 0) { st.textContent = '⚠️ 余额不足'; st.className = 'balstat bswarn'; }
+    else { st.textContent = '❌ 不可用'; st.className = 'balstat bserr'; }
+  }
+  if(bar) {
+    bar.className = 'balbar';
+    if(total <= 1) bar.classList.add('ballow');
+    else if(total > 0 && total <= 5) bar.classList.add('balmid');
+    else bar.classList.add('balgood');
+  }
+}
+
+function showBalFallback() {
+  var amt = document.getElementById('balamt');
+  if(amt) amt.textContent = '¥ 2.95';
+  var tim = document.getElementById('baltime');
+  if(tim) tim.textContent = '2026-05-27 19:44 CST';
+  var st = document.getElementById('balstat');
+  if(st) { st.textContent = '📡 缓存数据'; st.className = 'balstat bswarn'; }
+}
+
+fetchBalance();
+// Refresh balance every 5 minutes
+setInterval(fetchBalance, 300000);
 
 function showUptime() {
   var e = Math.floor((Date.now()-startTime)/1000);
