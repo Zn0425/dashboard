@@ -127,3 +127,19 @@ h1{font-size:2.2em;font-weight:700;background:linear-gradient(135deg,#3b82f6,#06
   .barsum{flex-direction:column;gap:10px}
   .sgrid{grid-template-columns:1fr}
 }
+
+/* ── DeepSeek 余额条 (低调融入) ── */
+.balbar{display:flex;align-items:center;gap:12px;background:rgba(17,24,39,.5);border:1px solid rgba(55,65,81,.25);border-radius:10px;padding:10px 18px;margin-bottom:20px;transition:all .4s;backdrop-filter:blur(6px)}
+.balbar:hover{border-color:rgba(55,65,81,.45);background:rgba(17,24,39,.7)}
+.balicon{font-size:1.2em;line-height:1;opacity:.7;filter:grayscale(.3)}
+.ballabel{font-size:.75em;color:#556677;font-weight:500;letter-spacing:.8px}
+.balamt{font-size:1.25em;font-weight:700;font-family:'SF Mono','Cascadia Code','Consolas',monospace;color:#c0c0c0}
+.balamt.low{color:#f87171}.balamt.mid{color:#fbbf24}.balamt.ok{color:#6ee7b7}
+.balstat{font-size:.68em;padding:2px 8px;border-radius:6px;font-weight:600;white-space:nowrap}
+.balstat.bsok{background:rgba(16,185,129,.08);color:#34d399}
+.balstat.bswarn{background:rgba(245,158,11,.08);color:#fbbf24}
+.balstat.bserr{background:rgba(239,68,68,.08);color:#f87171}
+.balrow{font-size:.7em;color:#4b5563;white-space:nowrap}
+.balrow span{color:#9ca3af;font-family:'SF Mono','Cascadia Code','Consolas',monospace}
+.baltime{font-size:.68em;color:#374151;margin-left:auto;white-space:nowrap}
+@media(max-width:768px){.balbar{flex-wrap:wrap;gap:8px;justify-content:center;padding:12px 16px}.baltime{margin-left:0;width:100%;text-align:center}}

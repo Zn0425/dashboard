@@ -208,34 +208,33 @@ function renderBalance(d) {
   var top = document.getElementById('baltop');
   var grt = document.getElementById('balgrt');
   var tim = document.getElementById('baltime');
-  var bar = document.getElementById('balbar');
+  var total = parseFloat(d.total_balance);
 
-  if(amt) amt.textContent = '¥' + parseFloat(d.total_balance).toFixed(2);
+  if(amt) {
+    amt.textContent = '¥' + total.toFixed(2);
+    amt.className = 'balamt';
+    if(total <= 1) amt.classList.add('low');
+    else if(total <= 5) amt.classList.add('mid');
+    else amt.classList.add('ok');
+  }
   if(top) top.textContent = '¥' + parseFloat(d.topped_up_balance).toFixed(2);
   if(grt) grt.textContent = '¥' + parseFloat(d.granted_balance).toFixed(2);
-  if(tim) tim.textContent = d.updated_at;
+  if(tim) tim.textContent = d.updated_at || '';
 
-  var total = parseFloat(d.total_balance);
   if(st) {
-    if(d.is_available && total > 0) { st.textContent = '✅ 可用'; st.className = 'balstat bsok'; }
-    else if(d.is_available && total <= 0) { st.textContent = '⚠️ 余额不足'; st.className = 'balstat bswarn'; }
-    else { st.textContent = '❌ 不可用'; st.className = 'balstat bserr'; }
-  }
-  if(bar) {
-    bar.className = 'balbar';
-    if(total <= 1) bar.classList.add('ballow');
-    else if(total > 0 && total <= 5) bar.classList.add('balmid');
-    else bar.classList.add('balgood');
+    if(d.is_available && total > 0) { st.textContent = '可用'; st.className = 'balstat bsok'; }
+    else if(d.is_available && total <= 0) { st.textContent = '不足'; st.className = 'balstat bswarn'; }
+    else { st.textContent = '异常'; st.className = 'balstat bserr'; }
   }
 }
 
 function showBalFallback() {
   var amt = document.getElementById('balamt');
-  if(amt) amt.textContent = '¥ 2.95';
+  if(amt) { amt.textContent = '¥ 2.95'; amt.className = 'balamt ok'; }
   var tim = document.getElementById('baltime');
-  if(tim) tim.textContent = '2026-05-27 19:44 CST';
+  if(tim) tim.textContent = '--';
   var st = document.getElementById('balstat');
-  if(st) { st.textContent = '📡 缓存数据'; st.className = 'balstat bswarn'; }
+  if(st) { st.textContent = '缓存'; st.className = 'balstat bswarn'; }
 }
 
 fetchBalance();
