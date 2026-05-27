@@ -1,6 +1,41 @@
 // 🐱 Xiaohei AI Agent Dashboard
 var startTime = new Date('2026-05-27T18:38:00+08:00').getTime();
 
+// Tool metadata (static)
+var toolMeta = {
+  'openviking_search': { icon: '🔍', cat: '搜索', color: '#3b82f6', cls: 'mib', desc: 'OpenViking 语义搜索' },
+  'write_file': { icon: '📝', cat: '写入', color: '#f59e0b', cls: 'mio', desc: '创建/写入文件' },
+  'exec': { icon: '💻', cat: '执行', color: '#ec4899', cls: 'mip', desc: 'Shell 命令执行' },
+  'web_fetch': { icon: '🌐', cat: '网络', color: '#8b5cf6', cls: 'mib', desc: '网页抓取与提取' },
+  'openviking_read': { icon: '📖', cat: '读取', color: '#10b981', cls: 'mig', desc: '读取单个资源' },
+  'openviking_multi_read': { icon: '📚', cat: '读取', color: '#10b981', cls: 'mig', desc: '并发读取多个资源' },
+  'generate_image': { icon: '🎨', cat: '生成', color: '#06b6d4', cls: 'mic2', desc: 'AI 图像生成' },
+  'edit_file': { icon: '✏️', cat: '写入', color: '#f59e0b', cls: 'mio', desc: '编辑文件内容' },
+  'openviking_memory_commit': { icon: '💾', cat: '记忆', color: '#84cc16', cls: 'mig', desc: '提交记忆到 OpenViking' }
+};
+
+// Default counts (fallback)
+var defaultToolCounts = {
+  'openviking_search': 4, 'write_file': 4, 'exec': 4, 'web_fetch': 2,
+  'openviking_read': 1, 'openviking_multi_read': 1, 'generate_image': 1, 'edit_file': 1
+};
+
+var toolCounts = {};
+var toolFreq = buildToolFreq();
+
+function buildToolFreq() {
+  var counts = (Object.keys(toolCounts).length > 0) ? toolCounts : defaultToolCounts;
+  var result = [];
+  var names = Object.keys(counts);
+  for (var i = 0; i < names.length; i++) {
+    var n = names[i];
+    var m = toolMeta[n] || { icon: '🔧', cat: '其他', color: '#666', cls: 'mib', desc: n };
+    result.push({ name: n, icon: m.icon, count: counts[n], cat: m.cat, color: m.color, cls: m.cls, desc: m.desc });
+  }
+  result.sort(function(a,b) { return b.count - a.count; });
+  return result;
+}
+
 // Load dynamic gateway start time from status.json
 function fetchStatus() {
   var xhr = new XMLHttpRequest();
@@ -23,6 +58,7 @@ function fetchStatus() {
   xhr.send();
 }
 fetchStatus();
+fetchTools();
 
 setInterval(function() {
   var e = Math.floor((Date.now()-startTime)/1000);
@@ -43,29 +79,23 @@ function animateCounter(el, target, duration) {
     else { el.textContent = Math.floor(start); }
   }, 16);
 }
+function getTotalCalls() { var t=0; for(var i=0;i<toolFreq.length;i++) t+=toolFreq[i].count; return t; }
+function getToolTypes() { return toolFreq.length; }
+
 document.addEventListener('DOMContentLoaded', function() {
   setTimeout(function() {
     var s1=document.getElementById('sc1'), s2=document.getElementById('sc2'), s3=document.getElementById('sc3');
-    if(s1) animateCounter(s1, 18, 800);
+    if(s1) animateCounter(s1, getTotalCalls(), 800);
     if(s2) animateCounter(s2, 5, 600);
     if(s3) animateCounter(s3, 4, 500);
   }, 300);
 });
 
-// tool freq bar chart
-var toolFreq = [
-  { name: 'openviking_search', icon: '🔍', count: 4, cat: '搜索', color: '#3b82f6' },
-  { name: 'write_file', icon: '📝', count: 4, cat: '写入', color: '#f59e0b' },
-  { name: 'exec', icon: '💻', count: 4, cat: '执行', color: '#ec4899' },
-  { name: 'web_fetch', icon: '🌐', count: 2, cat: '网络', color: '#8b5cf6' },
-  { name: 'openviking_read', icon: '📖', count: 1, cat: '读取', color: '#10b981' },
-  { name: 'openviking_multi_read', icon: '📚', count: 1, cat: '读取', color: '#10b981' },
-  { name: 'generate_image', icon: '🎨', count: 1, cat: '生成', color: '#06b6d4' },
-  { name: 'edit_file', icon: '✏️', count: 1, cat: '写入', color: '#f59e0b' }
-];
-var maxCount = 4;
+var maxCount = 1;
 
 function renderBarChart() {
+  maxCount = 1;
+  for(var i=0; i<toolFreq.length; i++) { if(toolFreq[i].count > maxCount) maxCount = toolFreq[i].count; }
   var container = document.getElementById('barchart');
   if(!container) return;
   var h = '';
@@ -178,16 +208,19 @@ function showTaskDetail(name) {
 
 // show functions
 function showTools() {
-  openModal('🔍 工具调用 (18次 · 8种 · 100%)', [
-    {icon:'🔍',cls:'mib',name:'openviking_search x4',desc:'OpenViking 语义搜索',st:'OK',sc:'mok'},
-    {icon:'📝',cls:'mio',name:'write_file x4',desc:'创建 HTML/CSS/JS/PY',st:'OK',sc:'mok'},
-    {icon:'💻',cls:'mip',name:'exec x4',desc:'Shell 命令执行',st:'OK',sc:'mok'},
-    {icon:'🌐',cls:'mib',name:'web_fetch x2',desc:'网页抓取与提取',st:'OK',sc:'mok'},
-    {icon:'✏️',cls:'mio',name:'edit_file x2',desc:'编辑 Dashboard 文件',st:'OK',sc:'mok'},
-    {icon:'📖',cls:'mig',name:'openviking_read x1',desc:'读取单个资源',st:'OK',sc:'mok'},
-    {icon:'📚',cls:'mig',name:'openviking_multi_read x1',desc:'并发读取多个资源',st:'OK',sc:'mok'},
-    {icon:'🎨',cls:'mic2',name:'generate_image x1',desc:'AI 图像生成',st:'OK',sc:'mok'}
-  ]);
+  var total = getTotalCalls();
+  var types = getToolTypes();
+  var items = [];
+  for (var i = 0; i < toolFreq.length; i++) {
+    var t = toolFreq[i];
+    items.push({
+      icon: t.icon, cls: t.cls,
+      name: t.name + ' x' + t.count,
+      desc: t.desc,
+      st: 'OK', sc: 'mok'
+    });
+  }
+  openModal('🔍 工具调用 (' + total + '次 · ' + types + '种 · 100%)', items);
 }
 
 function showTasks() {
@@ -278,6 +311,53 @@ function showUptime() {
     {icon:'⏱️',cls:'mib',name:'运行时长',desc:uptimeStr+' since start',st:'UP',sc:'mok'},
     {icon:'📅',cls:'mip',name:'启动时间',desc:startStr,st:'OK',sc:'mok'}
   ]);
+}
+
+// 🔧 Tool call tracking
+function fetchTools() {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'tools.json?t=' + Date.now(), true);
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      try {
+        var d = JSON.parse(xhr.responseText);
+        toolCounts = d.tools || {};
+        applyToolData();
+      } catch(e) { console.log('Tools fetch error:', e); }
+    }
+  };
+  xhr.send();
+}
+
+function applyToolData() {
+  // Rebuild toolFreq
+  toolFreq = buildToolFreq();
+
+  // Re-render bar chart
+  renderBarChart();
+
+  // Update stat counters
+  var s1 = document.getElementById('sc1');
+  if (s1) animateCounter(s1, getTotalCalls(), 800);
+
+  // Update stat subtitle
+  var sub = document.querySelector('.stat:nth-child(1) .stsub');
+  if (sub) sub.textContent = getToolTypes() + ' 种工具 · 100% 成功';
+
+  // Update panel headers
+  var badges = document.querySelectorAll('.phbadge');
+  if (badges.length >= 1) badges[0].textContent = '共 ' + getTotalCalls() + ' 次调用';
+  if (badges.length >= 2) badges[1].textContent = getToolTypes() + ' 种工具 · 总调用 ' + getTotalCalls() + ' 次';
+
+  // Update barsum
+  var bsi = document.querySelectorAll('.bsi strong');
+  var topTool = toolFreq.length > 0 ? toolFreq[0] : null;
+  if (bsi.length >= 1 && topTool) bsi[0].textContent = topTool.name + ' (' + topTool.count + '次)';
+  if (bsi.length >= 3) bsi[2].textContent = getToolTypes() + ' 种';
+
+  // Update session overview
+  var sivs = document.querySelectorAll('.sgrid .siv');
+  if (sivs.length >= 2) sivs[1].textContent = getTotalCalls() + ' 次';
 }
 
 console.log('🐱 Xiaohei Dashboard ready!');

@@ -1,0 +1,14 @@
+{
+  "tools": {
+    "openviking_search": 4,
+    "write_file": 4,
+    "exec": 5,
+    "web_fetch": 2,
+    "openviking_read": 1,
+    "openviking_multi_read": 1,
+    "generate_image": 1,
+    "edit_file": 1,
+    "openviking_memory_commit": 1
+  },
+  "updated_at": "2026-05-27T20:42:00+08:00"
+}
