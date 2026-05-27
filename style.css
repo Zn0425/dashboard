@@ -84,3 +84,46 @@ h1{font-size:2.2em;font-weight:700;background:linear-gradient(135deg,#3b82f6,#06
 .footer{text-align:center;padding:40px 0 30px;color:#556677;font-size:.85em}
 .footer .paws{font-size:1.5em;margin-bottom:10px;letter-spacing:5px}
 @media(max-width:768px){.stats,.grid2{grid-template-columns:1fr}h1{font-size:1.6em}.arch{flex-direction:column}.aa{transform:rotate(90deg)}}
+
+/* ── 统计卡片副标题 ── */
+.stsub{font-size:.7em;color:#556677;margin-top:3px}
+
+/* ── 面板标题徽章 ── */
+.phbadge{font-size:.75em;color:#6b7280;font-weight:400;margin-left:auto;background:rgba(255,255,255,.05);padding:3px 10px;border-radius:10px}
+
+/* ── 柱状图 ── */
+.barow{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.barlabel{width:200px;display:flex;align-items:center;gap:8px;font-size:.82em;color:#c0c0c0;flex-shrink:0}
+.baricon{font-size:1em;width:22px;text-align:center}
+.bartrack{flex:1;height:22px;background:rgba(55,65,81,.4);border-radius:6px;overflow:hidden}
+.barfill{height:100%;border-radius:6px;transition:width .8s ease;animation:barGrow .8s ease forwards;min-width:4px}
+@keyframes barGrow{from{width:0!important}}
+.barcnt{font-weight:700;font-size:.9em;color:#e0e0e0;width:24px;text-align:center}
+
+/* ── 分类汇总 ── */
+.catrow{display:flex;gap:16px;flex-wrap:wrap;margin-top:15px;padding-top:15px;border-top:1px solid rgba(55,65,81,.3)}
+.tcat{display:flex;align-items:center;gap:6px;font-size:.8em;color:#9ca3af}
+.tcat strong{color:#e0e0e0;margin-left:2px}
+.tcdot{width:8px;height:8px;border-radius:50%}
+
+/* ── 柱状图底部摘要 ── */
+.barsum{display:flex;gap:20px;margin-top:15px;padding-top:15px;border-top:1px solid rgba(55,65,81,.3)}
+.bsi{flex:1;text-align:center}
+.bsi span{display:block;font-size:.75em;color:#6b7280;margin-bottom:4px}
+.bsi strong{display:block;font-size:.95em;color:#e0e0e0}
+
+/* ── 会话概览 ── */
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.si{background:rgba(17,24,39,.6);border:1px solid rgba(55,65,81,.3);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;transition:.3s}
+.si:hover{border-color:rgba(236,72,153,.3);background:rgba(236,72,153,.05)}
+.sid{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.sido{background:#10b981;box-shadow:0 0 8px rgba(16,185,129,.5)}
+.sil{font-size:.78em;color:#6b7280}
+.siv{font-weight:600;font-size:.88em;color:#d0d0d0}
+
+/* ── 响应式 ── */
+@media(max-width:768px){
+  .barlabel{width:120px;font-size:.72em}
+  .barsum{flex-direction:column;gap:10px}
+  .sgrid{grid-template-columns:1fr}
+}
