@@ -75,6 +75,12 @@ h1{font-size:2.2em;font-weight:700;background:linear-gradient(135deg,#3b82f6,#06
 .si{background:rgba(17,24,39,.6);border:1px solid rgba(55,65,81,.3);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px}
 .sid{width:10px;height:10px;border-radius:50%;flex-shrink:0}.sido{background:#10b981}
 .sil{font-size:.85em;color:#9ca3af}.siv{font-weight:600;font-size:.9em}
+/* Memory Detail */
+.miclick{cursor:pointer}.miclick:hover{background:rgba(59,130,246,.08);border-radius:10px;padding:0 8px;margin:0 -8px}
+.memback{display:inline-flex;align-items:center;gap:6px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);color:#60a5fa;padding:8px 16px;border-radius:8px;font-size:.85em;cursor:pointer;margin-bottom:16px;transition:.3s}.memback:hover{background:rgba(59,130,246,.2);color:#93c5fd}
+.mdct{line-height:1.7}.mdct h3{font-size:1.1em;margin:16px 0 10px;color:#e0e0e0}.mdct p{margin:8px 0;color:#c0c0c0;font-size:.92em}.mdct strong{color:#93c5fd}.mdct ul{margin:8px 0;padding-left:20px}.mdct li{margin:4px 0;color:#c0c0c0;font-size:.9em}.mdct code{background:rgba(59,130,246,.1);padding:2px 6px;border-radius:4px;font-size:.85em;color:#60a5fa}
+.mdtbl{width:100%;border-collapse:collapse;margin:12px 0}.mdtbl td{padding:10px 14px;border-bottom:1px solid rgba(55,65,81,.4);font-size:.88em}.mdtbl td:first-child{color:#9ca3af;font-weight:600;width:110px}.mdtbl td:last-child{color:#c0c0c0}
+.mdemp{text-align:center;padding:30px 20px;background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.15);border-radius:12px;margin:12px 0}.mdemp span{font-size:2em;display:block;margin-bottom:10px}.mdemp p{color:#f59e0b;font-weight:600;margin:4px 0}.mdemp .mds{color:#9ca3af;font-weight:400;font-size:.82em;margin-top:6px}
 .footer{text-align:center;padding:40px 0 30px;color:#556677;font-size:.85em}
 .footer .paws{font-size:1.5em;margin-bottom:10px;letter-spacing:5px}
 @media(max-width:768px){.stats,.grid2{grid-template-columns:1fr}h1{font-size:1.6em}.arch{flex-direction:column}.aa{transform:rotate(90deg)}}
