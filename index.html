@@ -34,34 +34,17 @@
 </div>
 
 <div class="stats">
-<div class="stat" onclick="showTools()"><div class="sv b" id="sc1">0</div><div class="sl">🔍 工具调用次数</div><div class="stsub">8 种工具 · 100% 成功</div></div>
-<div class="stat" onclick="showTasks()"><div class="sv g" id="sc2">0</div><div class="sl">✅ 完成任务数</div><div class="stsub">全部完成 ✓</div></div>
-<div class="stat" onclick="showMemories()"><div class="sv c" id="sc3">0</div><div class="sl">🧠 记忆条目</div><div class="stsub">2 Active · 2 Pending</div></div>
-<div class="stat" onclick="showUptime()"><div class="sv p" id="up">--</div><div class="sl">⏱️ 运行时间</div><div class="stsub">since 2026-05-27 18:38</div></div>
+<div class="stat" onclick="showTools()"><div class="sv b" id="sc1">0</div><div class="sl">🔍 工具调用次数</div><div class="stsub">加载中...</div></div>
+<div class="stat" onclick="showTasks()"><div class="sv g" id="sc2">0</div><div class="sl">✅ 完成任务数</div><div class="stsub">加载中...</div></div>
+<div class="stat" onclick="showMemories()"><div class="sv c" id="sc3">0</div><div class="sl">🧠 记忆条目</div><div class="stsub">加载中...</div></div>
+<div class="stat" onclick="showUptime()"><div class="sv p" id="up">--</div><div class="sl">⏱️ 运行时间</div><div class="stsub">加载中...</div></div>
 </div>
 
 <div class="grid2">
 <div class="panel">
-<div class="ph"><div class="dot" style="background:#10b981"></div>🔧 工具执行日志 <span class="phbadge">共 18 次调用</span></div>
+<div class="ph"><div class="dot" style="background:#10b981"></div>🔧 工具执行日志 <span class="phbadge">加载中...</span></div>
 <div class="pb log">
-<div class="entry"><div class="ei eis">🔍</div><div><div class="en">openviking_search</div><div class="ed">Query: OpenViking 知识库检索</div></div><div class="es eso">OK</div></div>
-<div class="entry"><div class="ei eir">📖</div><div><div class="en">openviking_read</div><div class="ed">Read: identity.md</div></div><div class="es eso">OK</div></div>
-<div class="entry"><div class="ei eiw">📝</div><div><div class="en">write_file</div><div class="ed">Created: xiaohei-intro/index.html</div></div><div class="es eso">OK</div></div>
-<div class="entry"><div class="ei eix">💻</div><div><div class="en">exec</div><div class="ed">npx localtunnel --port 8080</div></div><div class="es eso">OK</div></div>
-<div class="entry"><div class="ei eiwb">🌐</div><div><div class="en">web_fetch</div><div class="ed">Fetch: myanimelist.net (小黑图片)</div></div><div class="es eso">OK</div></div>
-<div class="entry"><div class="ei eis">🔍</div><div><div class="en">openviking_search</div><div class="ed">Search: memories/identity/soul</div></div><div class="es eso">OK</div></div>
-<div class="entry"><div class="ei eiw">📝</div><div><div class="en">write_file</div><div class="ed">Created: dashboard/index.html</div></div><div class="es eso">OK</div></div>
-<div class="entry"><div class="ei eix">💻</div><div><div class="en">exec</div><div class="ed">python3 -m http.server 8080 (restart)</div></div><div class="es eso">OK</div></div>
-<div class="entry"><div class="ei eiwb">🌐</div><div><div class="en">web_fetch</div><div class="ed">Deployed via localtunnel</div></div><div class="es eso">OK</div></div>
-<div class="entry"><div class="ei eir">📖</div><div><div class="en">openviking_multi_read</div><div class="ed">Read all memory files</div></div><div class="es eso">OK</div></div>
-<div class="entry"><div class="ei eis">🔍</div><div><div class="en">openviking_search</div><div class="ed">Final verification: dashboard</div></div><div class="es eso">OK</div></div>
-<div class="entry"><div class="ei eiim">🎨</div><div><div class="en">generate_image</div><div class="ed">Dashboard 封面图生成</div></div><div class="es eso">OK</div></div>
-<div class="entry"><div class="ei eix">💻</div><div><div class="en">exec</div><div class="ed">curl DeepSeek API 余额查询</div></div><div class="es eso">OK</div></div>
-<div class="entry"><div class="ei eiw">📝</div><div><div class="en">write_file</div><div class="ed">Created: update_balance.py</div></div><div class="es eso">OK</div></div>
-<div class="entry"><div class="ei eiw">📝</div><div><div class="en">write_file</div><div class="ed">Created: balance.json</div></div><div class="es eso">OK</div></div>
-<div class="entry"><div class="ei eiw">✏️</div><div><div class="en">edit_file</div><div class="ed">Update: index.html + 余额面板</div></div><div class="es eso">OK</div></div>
-<div class="entry"><div class="ei eiw">✏️</div><div><div class="en">edit_file</div><div class="ed">Update: app.js + 余额逻辑</div></div><div class="es eso">OK</div></div>
-<div class="entry"><div class="ei eix">💻</div><div><div class="en">exec</div><div class="ed">Git commit & push Dashboard v3</div></div><div class="es eso">OK</div></div>
+<div class="entry"><div class="ei eis">⏳</div><div><div class="en">加载中...</div><div class="ed">正在从 tool_stats.json 读取数据</div></div><div class="es eso">...</div></div>
 </div>
 </div>
 
@@ -78,14 +61,14 @@
 
 <!-- 工具调用频率 -->
 <div class="panel" style="margin-bottom:25px">
-<div class="ph"><div class="dot" style="background:#f59e0b"></div>📊 工具调用频率 <span class="phbadge">8 种工具 · 总调用 18 次</span></div>
+<div class="ph"><div class="dot" style="background:#f59e0b"></div>📊 工具调用频率 <span class="phbadge">加载中...</span></div>
 <div class="pb">
 <div id="barchart"></div>
 <div class="catrow" id="catcaps"></div>
 <div class="barsum">
-<div class="bsi"><span>🔍 最常用</span><strong>openviking_search (3次)</strong></div>
+<div class="bsi"><span>🔍 最常用</span><strong>加载中...</strong></div>
 <div class="bsi"><span>⚡ 成功率</span><strong>100%</strong></div>
-<div class="bsi"><span>📈 工具种类</span><strong>7 种</strong></div>
+<div class="bsi"><span>📈 工具种类</span><strong>--</strong></div>
 </div>
 </div>
 </div>
@@ -124,10 +107,10 @@
 <div class="ph"><div class="dot" style="background:#ec4899"></div>⚡ 会话概览</div>
 <div class="pb">
 <div class="sgrid">
-<div class="si"><div class="sid sido"></div><div><div class="sil">对话轮次</div><div class="siv">8+ rounds</div></div></div>
-<div class="si"><div class="sid sido"></div><div><div class="sil">工具调用</div><div class="siv">18 次</div></div></div>
+<div class="si"><div class="sid sido"></div><div><div class="sil">对话轮次</div><div class="siv">...</div></div></div>
+<div class="si"><div class="sid sido"></div><div><div class="sil">工具调用</div><div class="siv">...</div></div></div>
 <div class="si"><div class="sid sido"></div><div><div class="sil">成功率</div><div class="siv" style="color:#10b981">100%</div></div></div>
-<div class="si"><div class="sid sido"></div><div><div class="sil">最常用工具</div><div class="siv">openviking_search</div></div></div>
+<div class="si"><div class="sid sido"></div><div><div class="sil">最常用工具</div><div class="siv">...</div></div></div>
 <div class="si"><div class="sid sido"></div><div><div class="sil">对话语言</div><div class="siv">中文 / English</div></div></div>
 <div class="si"><div class="sid sido"></div><div><div class="sil">部署平台</div><div class="siv">GitHub Pages</div></div></div>
 </div>

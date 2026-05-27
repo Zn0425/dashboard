@@ -355,11 +355,11 @@ function renderBalance(d) {
 
 function showBalFallback() {
   var amt = document.getElementById('balamt');
-  if(amt) { amt.textContent = '¥ 2.95'; amt.className = 'balamt ok'; }
+  if(amt) { amt.textContent = '加载失败'; amt.className = 'balamt low'; }
   var tim = document.getElementById('baltime');
-  if(tim) tim.textContent = '--';
+  if(tim) tim.textContent = '重试中...';
   var st = document.getElementById('balstat');
-  if(st) { st.textContent = '缓存'; st.className = 'balstat bswarn'; }
+  if(st) { st.textContent = '异常'; st.className = 'balstat bserr'; }
 }
 
 fetchBalance();
