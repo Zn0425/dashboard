@@ -238,8 +238,8 @@ function showBalFallback() {
 }
 
 fetchBalance();
-// Refresh balance every 5 minutes
-setInterval(fetchBalance, 300000);
+// Refresh balance every 2 minutes
+setInterval(fetchBalance, 120000);
 
 function showUptime() {
   var e = Math.floor((Date.now()-startTime)/1000);
