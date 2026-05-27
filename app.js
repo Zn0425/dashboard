@@ -403,4 +403,37 @@ function fetchTools() {
   });
 }
 
+// 💬 Dynamic conversation demo - load from conversation.json
+function fetchConversation() {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'conversation.json?t=' + Date.now(), true);
+  xhr.onload = function() {
+    if (xhr.status !== 200) return;
+    try {
+      var d = JSON.parse(xhr.responseText);
+      var msgs = d.conversations || [];
+      if (msgs.length === 0) return;
+      // Take last 2 rounds (up to 4 messages)
+      var recent = msgs.slice(-4);
+      var chatbox = document.getElementById('chatbox');
+      if (!chatbox) return;
+      var h = '';
+      for (var i = 0; i < recent.length; i++) {
+        var m = recent[i];
+        var cls = m.role === 'user' ? 'cmus' : 'cmag';
+        var caCls = m.role === 'user' ? 'cah' : 'cab';
+        var emoji = m.role === 'user' ? '👤' : '🐱';
+        h += '<div class=\"cm '+cls+'\"><div class=\"ca '+caCls+'\">'+emoji+'</div><div class=\"cb\">'+escHtml(m.content)+'</div></div>';
+      }
+      chatbox.innerHTML = h;
+    } catch(e) { console.log('Conv error:', e); }
+  };
+  xhr.send();
+}
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// Refresh conversation every 5 minutes
+fetchConversation();
+setInterval(fetchConversation, 300000);
+
 console.log('🐱 Xiaohei Dashboard ready!');

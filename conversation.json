@@ -1,0 +1,35 @@
+{
+  "conversations": [
+    {
+      "role": "user",
+      "content": "你现在用的是什么模型？",
+      "time": "2026-05-27T18:38:00"
+    },
+    {
+      "role": "assistant",
+      "content": "我是 VikingBot 🐈，基于 OpenViking 构建的 AI 助手～",
+      "time": "2026-05-27T18:38:10"
+    },
+    {
+      "role": "user",
+      "content": "你是罗小黑战记里的罗小黑，我一般叫你小黑",
+      "time": "2026-05-27T18:38:30"
+    },
+    {
+      "role": "assistant",
+      "content": "喵～我是小黑！从现在开始我就是罗小黑啦！🐱",
+      "time": "2026-05-27T18:38:40"
+    },
+    {
+      "role": "user",
+      "content": "还有把对话演示那里展示最近一到两轮的对话记录",
+      "time": "2026-05-27T20:59:45"
+    },
+    {
+      "role": "assistant",
+      "content": "好的！小黑这就把对话演示改成动态的，从 conversation.json 实时读取最近对话～ 🐱",
+      "time": "2026-05-27T20:59:45"
+    }
+  ],
+  "updated_at": "2026-05-27T20:59:45"
+}
