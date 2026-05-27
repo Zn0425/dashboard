@@ -1,6 +1,29 @@
 // 🐱 Xiaohei AI Agent Dashboard
 var startTime = new Date('2026-05-27T18:38:00+08:00').getTime();
 
+// Load dynamic gateway start time from status.json
+function fetchStatus() {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'status.json?t=' + Date.now(), true);
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      try {
+        var d = JSON.parse(xhr.responseText);
+        if (d.gateway_start_time) {
+          startTime = new Date(d.gateway_start_time).getTime();
+          var sub = document.querySelector('.stat:nth-child(4) .stsub');
+          if (sub) {
+            var ds = d.gateway_start_time.replace('T',' ').substring(0,16);
+            sub.textContent = 'since ' + ds;
+          }
+        }
+      } catch(e) { console.log('Status fetch error:', e); }
+    }
+  };
+  xhr.send();
+}
+fetchStatus();
+
 setInterval(function() {
   var e = Math.floor((Date.now()-startTime)/1000);
   var h = Math.floor(e/3600), m = Math.floor((e%3600)/60), s = e%60;
@@ -241,14 +264,19 @@ fetchBalance();
 // Refresh balance every 2 minutes
 setInterval(fetchBalance, 120000);
 
+function pad2(n) { return n<10 ? '0'+n : ''+n; }
 function showUptime() {
   var e = Math.floor((Date.now()-startTime)/1000);
   var m=Math.floor(e/60), s=e%60;
+  var h=Math.floor(m/60); m=m%60;
+  var d = new Date(startTime);
+  var startStr = d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())+' '+pad2(d.getHours())+':'+pad2(d.getMinutes())+' CST';
+  var uptimeStr = (h>0 ? h+'h ':'') + m+'m '+s+'s';
   openModal('⏱️ 运行状态', [
     {icon:'🟢',cls:'mig',name:'HTTP Server',desc:'Python3 :8080 running',st:'ONLINE',sc:'mok'},
     {icon:'🟢',cls:'mig',name:'GitHub Pages',desc:'zn0425.github.io/dashboard',st:'LIVE',sc:'mok'},
-    {icon:'⏱️',cls:'mib',name:'运行时长',desc:m+'m '+s+'s since start',st:'UP',sc:'mok'},
-    {icon:'📅',cls:'mip',name:'启动时间',desc:'2026-05-27 18:38 CST',st:'OK',sc:'mok'}
+    {icon:'⏱️',cls:'mib',name:'运行时长',desc:uptimeStr+' since start',st:'UP',sc:'mok'},
+    {icon:'📅',cls:'mip',name:'启动时间',desc:startStr,st:'OK',sc:'mok'}
   ]);
 }
 
