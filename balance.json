@@ -1,7 +1,7 @@
 {
-  "is_available": false,
-  "topped_up_balance": "-0.010000",
+  "is_available": true,
+  "topped_up_balance": "1.810000",
   "granted_balance": "0.000000",
-  "total_balance": "-0.010000",
-  "updated_at": "06-18 17:40"
+  "total_balance": "1.810000",
+  "updated_at": "06-18 17:50"
 }
